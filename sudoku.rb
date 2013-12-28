@@ -1,33 +1,34 @@
+arr = [
+  [0,0,8, 0,0,7, 0,0,0],
+  [3,0,0, 5,4,0, 2,0,0],
+  [6,0,0, 0,0,0, 0,0,0],
+
+  [0,4,1, 0,0,2, 0,0,0],
+  [0,2,0, 8,1,3, 0,4,0],
+  [0,0,0, 9,0,0, 6,2,0],
+
+  [0,0,0, 0,0,0, 0,0,5],
+  [0,0,7, 0,6,1, 0,0,2],
+  [0,0,0, 2,0,0, 1,0,0]
+]
+
+#
 # arr = [
-  # [0,0,8, 0,0,7, 0,0,0],
-  # [3,0,0, 5,4,0, 2,0,0],
-  # [6,0,0, 0,0,0, 0,0,0],
-# 
-  # [0,4,1, 0,0,2, 0,0,0],
-  # [0,2,0, 8,1,3, 0,4,0],
-  # [0,0,0, 9,0,0, 6,2,0],
-# 
-  # [0,0,0, 0,0,0, 0,0,5],
-  # [0,0,7, 0,6,1, 0,0,2],
-  # [0,0,0, 2,0,0, 1,0,0]
+# [5,0,1, 8,0,0, 2,9,0],
+# [0,2,0, 0,0,1, 0,7,0],
+# [0,9,4, 0,0,3, 0,0,5],
+#
+# [9,4,6, 0,0,8, 0,0,7],
+# [0,1,0, 0,0,0, 0,6,0],
+# [3,0,0, 6,0,0, 4,2,1],
+#
+# [6,0,0, 7,0,0, 8,3,0],
+# [0,3,0, 9,0,0, 0,1,0],
+# [0,7,9, 0,0,2, 5,0,6]
 # ]
 
-
- arr = [
-   [5,0,1, 8,0,0, 2,9,0],
-   [0,2,0, 0,0,1, 0,7,0],
-   [0,9,4, 0,0,3, 0,0,5],
- 
-   [9,4,6, 0,0,8, 0,0,7],
-   [0,1,0, 0,0,0, 0,6,0],
-   [3,0,0, 6,0,0, 4,2,1],
- 
-   [6,0,0, 7,0,0, 8,3,0],
-   [0,3,0, 9,0,0, 0,1,0],
-   [0,7,9, 0,0,2, 5,0,6]
- ]
-
 SIZE = 9
+ALL = [1,2,3,4,5,6,7,8,9]
 class Sudoku
   def initialize(arr)
     @arr = []
@@ -68,26 +69,6 @@ class Sudoku
     (row_at(row) | column_at(col) | box_at(col,row)) - [@arr[row][col].value]
   end
 
-  def do_simple_check
-    (0...SIZE).each {|row|
-      (0...SIZE).each {|col|
-        if (!@arr[row][col].is_ok)
-          @arr[row][col].imposs_vals = used_numbers_for(col, row)
-          p "col=#{col}  row=#{row} = #{used_numbers_for(col, row)}" if used_numbers_for(col, row).size == 8  
-          @arr[row][col].check
-        end
-      }
-    }
-    # @arr[1][2].imposs_vals = used_numbers_for(2, 1)
-    # i = @arr[1][2]
-    # p i.imposs_vals
-    # p i.value
-    # i.check
-    # p i.value
-    
-    
-  end
-
   def to_s
     out = ""
     (0...SIZE).each {|y|
@@ -100,6 +81,17 @@ class Sudoku
     out
   end
 
+  def do_simple_check
+    result = false
+    (0...SIZE).each {|row|
+    (0...SIZE).each {|col|
+        next if @arr[row][col].is_ok
+          result = true if @arr[row][col].imposs_vals(used_numbers_for(col, row)) 
+      }
+    }
+    return result
+  end
+
   private
 
   def to_array (arr)
@@ -109,33 +101,29 @@ end
 
 class Item
 
-  @@all = [1,2,3,4,5,6,7,8,9]
-
-  attr_accessor :value, :poss_vals, :imposs_vals, :is_ok
-
-  def check
-    if (@poss_vals.size == 1)
-      @value = @poss_vals[0];
-      @is_ok = true;
-    end
+  attr_reader :is_ok, :value
+  def imposs_vals(arr)
+    @imposs_vals |= arr
+    return false if @is_ok
     if (@imposs_vals.size == SIZE-1)
-      @value = (@@all - @imposs_vals)[0]
-      @is_ok = true;
+      @value = (ALL - @imposs_vals)[0]
+      @is_ok = true
+    return true
     end
-    @is_ok
+    return false
   end
 
   def initialize(val)
     if (val == 0)
       @value = 0
       @is_ok = false
-      @poss_vals = [1,2,3,4,5,6,7,8,9]
+      @poss_vals = ALL
       @imposs_vals = []
     else
       @value = val
       @is_ok = true
       @poss_vals = []
-      @imposs_vals = [1,2,3,4,5,6,7,8,9] - [val]
+      @imposs_vals = ALL - [val]
     end
   end
 end
@@ -144,6 +132,9 @@ s = Sudoku.new(arr)
 
 puts s.to_s
 puts '-------------------'
-10.times do s.do_simple_check end
+while s.do_simple_check do
+  puts
+end
 puts s.to_s
+puts
 
