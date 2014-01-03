@@ -74,7 +74,7 @@ class Sudoku
   end
   
   def to_string
-     out = "----------------------------------------------------\n"
+     out = ""
     (0...SIZE).each {|y|
       out << "\n" if y%3 == 0 && y != 0
       tmp = @arr[y].map{|item| item.value > 0 ? item.value.to_s + (" " * 26) : item.poss_vals.to_s + (" " * ((item.imposs_vals.size*3) ))}.join(" ") + "\n"
@@ -84,7 +84,7 @@ class Sudoku
   end
 
   def to_s
-    out = "--------------------\n"
+    out = ""
     (0...SIZE).each {|y|
       out << "\n" if y%3 == 0 && y != 0
       tmp = @arr[y].map{|item| item.value > 0 ? item.value : "?"}.join(" ") + "\n"

@@ -1,47 +1,47 @@
 require './sudoku.rb'
 
-arr = [
-  [0,0,8, 0,6,0, 0,0,0],
-  [6,3,0, 0,4,0, 1,0,0],
-  [0,0,0, 1,0,8, 0,0,2],
+# arr = [
+  # [0,0,8, 0,6,0, 0,0,0],
+  # [6,3,0, 0,4,0, 1,0,0],
+  # [0,0,0, 1,0,8, 0,0,2],
+# 
+  # [0,0,0, 0,0,0, 0,1,9],
+  # [8,0,1, 0,0,0, 3,0,4],
+  # [7,6,0, 0,0,0, 0,0,0],
+# 
+  # [4,0,0, 9,0,5, 0,0,0],
+  # [0,0,6, 0,8,0, 0,5,3],
+  # [0,0,0, 0,7,0, 8,0,0]
+# ]
 
-  [0,0,0, 0,0,0, 0,1,9],
-  [8,0,1, 0,0,0, 3,0,4],
-  [7,6,0, 0,0,0, 0,0,0],
-
-  [4,0,0, 9,0,5, 0,0,0],
-  [0,0,6, 0,8,0, 0,5,3],
-  [0,0,0, 0,7,0, 8,0,0]
-]
-
-arr_sol = [
-  [5,1,8, 3,6,2, 4,9,7],
-  [6,3,2, 7,4,9, 1,8,5],
-  [9,4,7, 1,5,8, 6,3,2],
-  
-  [3,5,4, 8,2,6, 7,1,9],
-  [8,2,1, 5,9,7, 3,6,4],
-  [7,6,9, 4,3,1, 5,2,8],
-  
-  [4,8,3, 9,1,5, 2,7,6],
-  [1,7,6, 2,8,4, 9,5,3],
-  [2,9,5, 6,7,3, 8,4,1]
-]
+# arr_sol = [
+  # [5,1,8, 3,6,2, 4,9,7],
+  # [6,3,2, 7,4,9, 1,8,5],
+  # [9,4,7, 1,5,8, 6,3,2],
+#   
+  # [3,5,4, 8,2,6, 7,1,9],
+  # [8,2,1, 5,9,7, 3,6,4],
+  # [7,6,9, 4,3,1, 5,2,8],
+#   
+  # [4,8,3, 9,1,5, 2,7,6],
+  # [1,7,6, 2,8,4, 9,5,3],
+  # [2,9,5, 6,7,3, 8,4,1]
+# ]
 
 # TOO HARD
-# arr = [
-  # [0,0,8, 0,0,7, 0,0,0],
-  # [3,0,0, 5,4,0, 2,0,0],
-  # [6,0,0, 0,0,0, 0,0,0],
-# 
-  # [0,4,1, 0,0,2, 0,0,0],
-  # [0,2,0, 8,1,3, 0,4,0],
-  # [0,0,0, 9,0,0, 6,2,0],
-# 
-  # [0,0,0, 0,0,0, 0,0,5],
-  # [0,0,7, 0,6,1, 0,0,2],
-  # [0,0,0, 2,0,0, 1,0,0]
-# ]
+arr = [
+  [0,0,8, 0,0,7, 0,0,0],
+  [3,0,0, 5,4,0, 2,0,0],
+  [6,0,0, 0,0,0, 0,0,0],
+
+  [0,4,1, 0,0,2, 0,0,0],
+  [0,2,0, 8,1,3, 0,4,0],
+  [0,0,0, 9,0,0, 6,2,0],
+
+  [0,0,0, 0,0,0, 0,0,5],
+  [0,0,7, 0,6,1, 0,0,2],
+  [0,0,0, 2,0,0, 1,0,0]
+]
 
 #SIMLE
 # arr = [
@@ -78,19 +78,6 @@ class Resolver
   
   def initialize(sudoku)
     @s = sudoku
-    @arr_sol = [
-      [5,1,8, 3,6,2, 4,9,7],
-      [6,3,2, 7,4,9, 1,8,5],
-      [9,4,7, 1,5,8, 6,3,2],
-      
-      [3,5,4, 8,2,6, 7,1,9],
-      [8,2,1, 5,9,7, 3,6,4],
-      [7,6,9, 4,3,1, 5,2,8],
-      
-      [4,8,3, 9,1,5, 2,7,6],
-      [1,7,6, 2,8,4, 9,5,3],
-      [2,9,5, 6,7,3, 8,4,1]
-    ]
   end
   
   def do_simple_check(s)
@@ -147,47 +134,27 @@ class Resolver
   def do_brute
     col, row = @s.search_next_pair
     s = make_suggestion(col, row, @s)
-    puts "============================================================ HERE IS ==============================================="
-    puts s.to_string
-    puts "================================================================ the solution ==========================================="
+    puts s
   end
   
     
   def make_suggestion (col, row, s)
-    puts "s[#{col}, #{row}] = #{s[col, row]}"
     ary = s[col, row].poss_vals
     ary.each{|value|
       begin
-        puts "trying  #{value} on #{col}x#{row}"
         s.switch_to_virtual_mode 
         s[col, row].value = value
         do_iteration(s)
-        puts s.to_string
-        s.compare(@arr_sol)
         s.check
-        puts "Done! Now cloning..." 
         new_s = s.deep_clone
-        puts new_s.to_string
         new_col, new_row = new_s.search_next_pair
-        puts "next is #{new_col}x#{new_row}"
         s =  make_suggestion(new_col, new_row, new_s)
-        puts "Oh, yeah! #{value} in #{col}x#{row} is what you need!"
         s.commit!
-        puts "Yes!!! " * 10 if s.resolved?
         return s if s.resolved?
       rescue Sudoku::NoCellsFoundException => ex
         raise Sudoku::WrongSolutionException, "No cells found, but it is not a solution" if !s.resolved?
-        puts
-        puts
-        puts
-        puts "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-        puts
-        puts
-        puts
         return s
       rescue Sudoku::WrongSolutionException => ex
-        puts "#{value} on #{col}x#{row} doesn't work cause of #{ex}, rollback.."
-        puts s.to_string
         s.revert!
         #puts ex.backtrace
         next
@@ -273,36 +240,12 @@ end
 
 s = Sudoku.from_array(arr)
 r = Resolver.new(s)
-5.times do
-  puts s.to_string
+2.times do
   r.do_iteration
 end
 # s[0,0].value = 1
 # r.do_iteration
 puts 
 puts
-p r.do_brute
-puts
-puts 
-r.check
-puts s.to_string
+r.do_brute
 
-
-
-# r.do_suggestion
-# r.do_cheat(1,1,7)
-# r.do_simple_check
-# r.do_last_stand_check
-# r.do_stripted_pair_check
-# puts s.to_string
-# r.do_cheat(1,0,5)
-# r.do_simple_check
-# r.do_last_stand_check
-# r.do_stripted_pair_check
-# puts s.to_string
-# r.do_cheat(4,3,5)
-# r.do_simple_check
-# r.do_last_stand_check
-# r.do_stripted_pair_check
-# r.do_simple_check
-#puts s.to_string
