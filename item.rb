@@ -38,7 +38,7 @@ class Item
   end
   
   def inspect
-    "col=#{col}  row=#{row} pos_vals=#{poss_vals}"
+    "col=#{col}  row=#{row} value=#{@value}" # pos_vals=#{poss_vals}"
   end
   
   def to_s
@@ -48,7 +48,7 @@ class Item
     elsif  pv.size == 2
       pv.to_s
     else
-      "[....]"
+      pv.to_s
     end
   end
 end
